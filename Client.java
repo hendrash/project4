@@ -8,6 +8,7 @@ import java.io.ObjectInputStream;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.net.MulticastSocket;
 public class Client{
 	private Socket socket;
 	private BufferedReader br;
@@ -46,7 +47,7 @@ public class Client{
 				try{
 					DatagramSocket ds = new DatagramSocket();
 					byte buf[] = null;
-					String testing[]={"Starting the udp server on client","these","are ","some example", "of udp messages "};	
+					String testing[]={"This","is an example of a ", "udp","String being ","broadcasted "};	
 					InetAddress ipAddress=InetAddress.getByName(ip);  
 					for(int i =0; i<testing.length;i++){
 						buf=testing[i].getBytes();
@@ -56,6 +57,21 @@ public class Client{
 					System.err.println(e);
 				}	
 			}).start();
+			new Thread(()->{
+				try{
+					byte[] buffer;
+					DatagramPacket packet;	
+					MulticastSocket socket = new MulticastSocket(9092);
+					InetAddress address=  InetAddress.getByName("233.0.0.1");
+					socket.joinGroup(address);
+				while(true){
+				buffer= new byte[1024];
+				packet= new DatagramPacket(buffer, buffer.length);
+				socket.receive(packet);
+				System.out.println(new String(packet.getData()));
+				}	
+				}catch(Exception e){System.out.println("Error "+e);}
+				}).start();
 
 		while(!line.equals("q")){
 				try{

@@ -60,16 +60,23 @@ class ClientHandler{
 			}catch(Exception i){System.out.println(i);};
 		}).start();
 	//UDP
-	new Thread(()->{
+		new Thread(()->{
 				try{
+				DatagramSocket s= new DatagramSocket();
 				DatagramSocket ds =new DatagramSocket(9091);
-				byte[] receive=new byte[65535];
-				DatagramPacket DpReceive = null;
+				byte[] receive=new byte[256];
+				DatagramPacket dpReceive = null;
+				DatagramPacket dpSend =null;
+				InetAddress address = InetAddress.getByName("233.0.0.1");
 				while(true){
-				DpReceive = new DatagramPacket(receive, receive.length);
-				ds.receive(DpReceive);
+				dpReceive = new DatagramPacket(receive, receive.length);
+				ds.receive(dpReceive);
+				System.out.println(receive.length);	
+				dpSend=new DatagramPacket(receive,receive.length,address, 9092);
+			
+				s.send(dpSend);	
 				System.out.println("Client : -"+ new String(receive));
-				receive= new byte[65535];
+				receive= new byte[256];
 				}	
 				}
 				catch(Exception e){
@@ -77,5 +84,4 @@ class ClientHandler{
 			}).start();
 	}
 }
-
 
